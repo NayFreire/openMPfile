@@ -2,6 +2,87 @@
 #include <string.h>
 #include <ctype.h>
 
+struct Linha{
+ char linha;
+ struct Linha *prox;
+};
+typedef struct Linha linha;
+
+int tam;
+
+void inicia(linha *FILA)
+{
+ FILA->prox = NULL;
+ tam=0;
+}
+
+int vazia(linha *FILA)
+{
+	if(FILA->prox == NULL)
+	  	return 1;
+	else
+	  	return 0;
+}
+
+linha *aloca(){
+	linha *nova=(linha *) malloc(sizeof(linha));
+	if(!nova){
+		printf("Sem memoria disponivel!\n");
+	  	exit(1);
+	}
+	else{
+	  	printf("Nova linha: "); 
+		scanf("%s", &nova->linha);
+	  	return nova;
+	}
+}
+
+void insere(linha *FILA)
+{
+	linha *nova=aloca();
+ 	nova->prox = NULL;
+
+ 	if(vazia(FILA))
+  		FILA->prox=nova;
+ 	else{
+  		linha *tmp = FILA->prox;
+
+  		while(tmp->prox != NULL)
+   		tmp = tmp->prox;
+
+  		tmp->prox = nova;
+ 	}
+ 	tam++;
+}
+
+linha *retira(linha *FILA)
+{
+	if(FILA->prox == NULL){
+	  	printf("Fila ja esta vazia\n");
+	  	return NULL;
+	}
+	else{
+	  	linha *tmp = FILA->prox;
+	  	FILA->prox = tmp->prox;
+	  	tam--;
+	  	return tmp;
+ 	}
+}
+
+void libera(linha *FILA){
+ 	if(!vazia(FILA)){
+  		linha *proxLinha,
+     	*atual;
+
+  		atual = FILA->prox;
+  		while(atual != NULL){
+   			proxLinha = atual->prox;
+   			free(atual);
+   			atual = proxLinha;
+  		}
+ 	}
+}
+
 int tiraCaracteresEspeciais(char *token){
 	int i=0;
 	printf("p: %s\n", token);
@@ -23,21 +104,31 @@ int lerLinha(char *linha, int l, char *palavra){
    
    	/* walk through other tokens */
    	while(token!=NULL){
-   		i++;
 //      	printf(" %s\n", token);
+    	palavrasSeparadas[i] = tolower(token);
       	tiraCaracteresEspeciais(&token);
-    	palavrasSeparadas[i] = tolower(strdup(token));
       	token = strtok(NULL, espaco);
+   		i++;
    	}
    	
    	int count = i;
    	
-   	for(i=0;i<count+1;i++){
-//   		printf("palavra[%d]: %s\n", i, palavrasSeparadas[i]);
+   	for(i=0;i<count;i++){
+   		printf("palavra[%d]: %s\n", i, palavrasSeparadas[i]);
 	}
 }
 
 int main(){
+	linha *FILA = (linha *) malloc(sizeof(linha));
+	
+	if(!FILA){
+  		printf("Sem memoria disponivel!\n");
+  		exit(1);
+ 	}
+	else{
+ 		inicia(FILA);
+ 	}
+	
 	FILE *arquivo;
 	char palavra[20];
 	int l=0;
