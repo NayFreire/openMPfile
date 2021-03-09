@@ -1,117 +1,77 @@
 #include <stdio.h>
 #include <string.h>
-#include<ctype.h>
+#include <ctype.h>
 
-struct Linha{
- 	char *linha;
-struct Linha *prox;
-};
-typedef struct Linha noLinha;
+typedef struct NO{
+	char linha;
+	struct NO *prox;
+}NO;
 
-int tam;
+typedef struct FILA{
+	NO *ini;
+	NO *fim;
+}FILA;
 
-void inicia(noLinha *FILA){
-	printf("Entrou em inicia\n");
-	FILA->prox = NULL;
-	tam=0;
+void inicializaFila(FILA *f){
+	f->ini = NULL;
+	f->fim = NULL;
 }
 
-int vazia(noLinha *FILA){
-	if(FILA->prox == NULL)
-	  	return 1;
-	else
-	  	return 0;
+void enfileira(int dado, FILA *f){
+	NO *ptr = (NO*) malloc(sizeof(NO)); //Aloca o novo nó da fila
+	if(ptr == NULL){
+		printf("Erro de alocacao\n");
+		return;
+	}
+	else{ //SEMPRE QUE UM NÓ É ALOCADO, INICIALIZA-SE O DADO E SEU PONTEIRO PRÓXIMO APONTA PARA NULL
+		ptr->dado = dado;
+		ptr->prox = NULL;
+		
+		if(f->ini == NULL){ //CASO SEJA O PRIMEIRO NÓ DA FILA, O PONTEIRO INÍCIO DA FILA TEM QUE APONTAR PARA ESSE NÓ
+			f->ini = ptr;
+		}
+		else{//CASO NÃO SEJA O PRIMEIRO NÓ A SER INSERIDO NA FILA, O PRÓXIMO DO ÚLTIMO NÓ INSERIDO VAI SER APONTADO PARA PTR
+			f->fim->prox = ptr;
+		}
+		
+		f->fim = ptr;
+		return;
+	}
 }
 
-noLinha *aloca(noLinha *FILA){
-//	printf("Entrou no aloca\n");
-	noLinha *nova=(noLinha *) malloc(sizeof(noLinha));
-//	printf("Alocou");
-	if(!nova){
-		printf("Sem memoria disponivel!\n");
-	  	exit(1);
+int desenfileirar(FILA *f){
+	NO *ptr = f->ini;
+	int dado;
+	if(ptr!=NULL){
+		f->ini = ptr->prox; //ATUALIZA O VALOR DO INÍCIO DA FILA COM O PRÓXIMO NÓ
+		ptr->prox = NULL; //DESCONECTANDO O NÓ DA FILA
+		dado = ptr->dado; //FAZENDO UM BACKUP COM O DADO DO NÓ EXCLUÍDO
+		free(ptr);
+		
+		if(f->ini == NULL){ //CASO O INÍCIO DA FILA APONTE PRA NULL, SIGNIFICA QUE NÃO HÁ MAIS NÓS PARA DESENFILEIRAR
+			f->fim = NULL; //ENTÃO O FIM DA FILA TAMBÉM DEVE APONTAR PARA NULL
+		}	
+		return dado;	
 	}
 	else{
-//		printf("Entrou no else aloca\n");
-		nova->linha = FILA->linha;
-	  	return nova;
+		printf("\nFila vazia");
+		return 0;
 	}
 }
 
-void insere(noLinha *FILA){
-//	printf("Entrou no insere\n");
-	noLinha *nova=aloca(FILA);
- 	nova->prox = NULL;
-
- 	if(vazia(FILA)){
- 		FILA->prox=nova;
-//  		printf("********* Inseriu na fila vazia *********\n");
-	}
- 	else{
-// 		printf("Fila nï¿½o estava vazia\n");
-  		noLinha *tmp = FILA->prox;
-
-  		while(tmp->prox != NULL)
-   		tmp = tmp->prox;
-
-  		tmp->prox = nova;
-  		printf("LINHA: %s", FILA->linha);
- 	}
- 	tam++;
- 	printf("\n--- tamanho: %d ---\n", tam);
- 	exibe(FILA);
-}
-
-void exibe(noLinha *FILA){
- 	if(vazia(FILA)){
-	  	printf("Fila vazia!\n\n");
-	  	return ;
- 	}
-
-	noLinha *tmp;
-	tmp = FILA->prox;
-	printf("\n************* Fila *************\n");
-	while( tmp != NULL){
-  		printf("%s\n", tmp->linha);
-  		tmp = tmp->prox;
- 	}
-//	printf("\n        ");
-//	int count;
-//	for(count=0 ; count < tam ; count++)
-//		printf("  ^  ");
-//	printf("\nOrdem:");
-//	for(count=0 ; count < tam ; count++)
-//  		printf("%5d", count+1);
-
- printf("\n\n");
-}
-
-noLinha *retira(noLinha *FILA)
-{
-	if(FILA->prox == NULL){
-	  	printf("Fila ja esta vazia\n");
-	  	return NULL;
+void imprimeFila(FILA *f){
+	NO *ptr = f->ini;
+	
+	if(ptr!=NULL){
+		while(ptr!=NULL){ //ENQUANTO HÁ NÓS NA FILA
+			printf("%d ", ptr->dado); //O DADO DO NÓ SERÁ MOSTRADO
+			ptr = ptr->prox; //E O PONTEIRO INÍCIO DA FILA SERÁ APONTADO PARA O PRÓXIMO NÓ, PARA QUE A FILA CONTINUE SENDO MOSTRADA
+		}
 	}
 	else{
-	  	noLinha *tmp = FILA->prox;
-	  	FILA->prox = tmp->prox;
-	  	tam--;
-	  	return tmp;
- 	}
-}
-
-void libera(noLinha *FILA){
- 	if(!vazia(FILA)){
-  		noLinha *proxLinha,
-     	*atual;
-
-  		atual = FILA->prox;
-  		while(atual != NULL){
-   			proxLinha = atual->prox;
-   			free(atual);
-   			atual = proxLinha;
-  		}
- 	}
+		printf("\nFila vazia\n");
+		return;
+	}
 }
 
 int tiraCaracteresEspeciais(char *token){
@@ -183,9 +143,9 @@ int main(){
 //		l++;
 		FILA->linha = linha;
 		insere(FILA);
-//		
+//		libera(FILA);
 //		lerLinha(&linha, l, &palavra);
 	}
-	free(FILA);
+//	free(FILA);
 	return 0;
 }
