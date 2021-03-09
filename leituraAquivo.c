@@ -17,21 +17,24 @@ void inicializaFila(FILA *f){
 	f->fim = NULL;
 }
 
-void enfileira(int dado, FILA *f){
+void enfileira(char linha, FILA *f){
 	NO *ptr = (NO*) malloc(sizeof(NO)); //Aloca o novo nó da fila
 	if(ptr == NULL){
 		printf("Erro de alocacao\n");
 		return;
 	}
 	else{ //SEMPRE QUE UM NÓ É ALOCADO, INICIALIZA-SE O DADO E SEU PONTEIRO PRÓXIMO APONTA PARA NULL
-		ptr->dado = dado;
+		printf("\n\t alocacao check\n");
+		ptr->linha = linha;
 		ptr->prox = NULL;
 		
 		if(f->ini == NULL){ //CASO SEJA O PRIMEIRO NÓ DA FILA, O PONTEIRO INÍCIO DA FILA TEM QUE APONTAR PARA ESSE NÓ
 			f->ini = ptr;
+			printf("\n\t enfileirando o primeiro no \n");
 		}
 		else{//CASO NÃO SEJA O PRIMEIRO NÓ A SER INSERIDO NA FILA, O PRÓXIMO DO ÚLTIMO NÓ INSERIDO VAI SER APONTADO PARA PTR
 			f->fim->prox = ptr;
+			printf("\n\t proximo no a ser enfileirado\n");
 		}
 		
 		f->fim = ptr;
@@ -41,17 +44,17 @@ void enfileira(int dado, FILA *f){
 
 int desenfileirar(FILA *f){
 	NO *ptr = f->ini;
-	int dado;
+	char linha;
 	if(ptr!=NULL){
 		f->ini = ptr->prox; //ATUALIZA O VALOR DO INÍCIO DA FILA COM O PRÓXIMO NÓ
 		ptr->prox = NULL; //DESCONECTANDO O NÓ DA FILA
-		dado = ptr->dado; //FAZENDO UM BACKUP COM O DADO DO NÓ EXCLUÍDO
+		linha = ptr->linha; //FAZENDO UM BACKUP COM O DADO DO NÓ EXCLUÍDO
 		free(ptr);
 		
 		if(f->ini == NULL){ //CASO O INÍCIO DA FILA APONTE PRA NULL, SIGNIFICA QUE NÃO HÁ MAIS NÓS PARA DESENFILEIRAR
 			f->fim = NULL; //ENTÃO O FIM DA FILA TAMBÉM DEVE APONTAR PARA NULL
 		}	
-		return dado;	
+		return linha;	
 	}
 	else{
 		printf("\nFila vazia");
@@ -64,7 +67,7 @@ void imprimeFila(FILA *f){
 	
 	if(ptr!=NULL){
 		while(ptr!=NULL){ //ENQUANTO HÁ NÓS NA FILA
-			printf("%d ", ptr->dado); //O DADO DO NÓ SERÁ MOSTRADO
+			printf("%s\n", ptr->linha); //O DADO DO NÓ SERÁ MOSTRADO
 			ptr = ptr->prox; //E O PONTEIRO INÍCIO DA FILA SERÁ APONTADO PARA O PRÓXIMO NÓ, PARA QUE A FILA CONTINUE SENDO MOSTRADA
 		}
 	}
@@ -72,14 +75,6 @@ void imprimeFila(FILA *f){
 		printf("\nFila vazia\n");
 		return;
 	}
-}
-
-int tiraCaracteresEspeciais(char *token){
-	int i=0;
-//	printf("p: %s\n", token);
-//	for(i=0;i<strlen(token);i++){
-//		printf("T[%d] = %c", i, token[i]);
-//	}
 }
 
 int lerLinha(char *linha, int l, char *palavra){
@@ -112,40 +107,43 @@ int lerLinha(char *linha, int l, char *palavra){
 }
 
 int main(){
-	noLinha *FILA = (noLinha *) malloc(sizeof(noLinha));
+	FILA *f1 = (FILA*) malloc(sizeof(FILA));
 	
-	if(!FILA){
-  		printf("Sem memoria disponivel!\n");
-  		exit(1);
- 	}
+	if(f1==NULL){
+		printf("Error de alocacao\n");
+		exit(-1);
+	}
 	else{
- 		inicia(FILA);
- 	}
+		inicializaFila(f1);	
+		
+		FILE *arquivo;
+		char palavra[20];
+		int l=0;
 	
-	FILE *arquivo;
-	char palavra[20];
-	int l=0;
+		printf("Digite a palavra a ser encontrada: ");
+		scanf("%s", &palavra);
+		//	palavra = tolower(palavra);
 	
-	printf("Digite a palavra a ser encontrada: ");
-	scanf("%s", &palavra);
-//	palavra = tolower(palavra);
+		arquivo = fopen("arquivo.txt", "r");
+		
+		if(arquivo == NULL){
+			perror("Nao foi possivel abrir o arquivo\n");
+			exit(1);
+		}
+		
+		char linha[1000];
+		while(fgets(linha, sizeof(linha), arquivo)){
+			printf("linha: %s\n", linha);
+		//	l++;
+//			FILA->linha = linha;
+//			insere(FILA);
+			enfileira(linha, f1);
+		//	libera(FILA);
+		//	lerLinha(&linha, l, &palavra);
+		}
+		//	free(FILA);
+		imprimeFila(f1);
+
+	}	
 	
-	arquivo = fopen("teste123.txt", "r");
-	
-	if(arquivo == NULL){
-		perror("Nao foi possivel abrir o arquivo\n");
-		exit(1);
-	}
-	
-	char linha[1000];
-	while(fgets(linha, sizeof(linha), arquivo)){
-		printf("linha: %s\n", linha);
-//		l++;
-		FILA->linha = linha;
-		insere(FILA);
-//		libera(FILA);
-//		lerLinha(&linha, l, &palavra);
-	}
-//	free(FILA);
-	return 0;
 }
