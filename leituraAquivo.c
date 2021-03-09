@@ -1,77 +1,108 @@
 #include <stdio.h>
 #include <string.h>
-#include <ctype.h>
+#include<ctype.h>
 
 struct Linha{
- char linha;
- struct Linha *prox;
+ 	char *linha;
+struct Linha *prox;
 };
-typedef struct Linha linha;
+typedef struct Linha noLinha;
 
 int tam;
 
-void inicia(linha *FILA)
-{
- FILA->prox = NULL;
- tam=0;
+void inicia(noLinha *FILA){
+	printf("Entrou em inicia\n");
+	FILA->prox = NULL;
+	tam=0;
 }
 
-int vazia(linha *FILA)
-{
+int vazia(noLinha *FILA){
 	if(FILA->prox == NULL)
 	  	return 1;
 	else
 	  	return 0;
 }
 
-linha *aloca(){
-	linha *nova=(linha *) malloc(sizeof(linha));
+noLinha *aloca(noLinha *FILA){
+//	printf("Entrou no aloca\n");
+	noLinha *nova=(noLinha *) malloc(sizeof(noLinha));
+//	printf("Alocou");
 	if(!nova){
 		printf("Sem memoria disponivel!\n");
 	  	exit(1);
 	}
 	else{
-	  	printf("Nova linha: "); 
-		scanf("%s", &nova->linha);
+//		printf("Entrou no else aloca\n");
+		nova->linha = FILA->linha;
 	  	return nova;
 	}
 }
 
-void insere(linha *FILA)
-{
-	linha *nova=aloca();
+void insere(noLinha *FILA){
+//	printf("Entrou no insere\n");
+	noLinha *nova=aloca(FILA);
  	nova->prox = NULL;
 
- 	if(vazia(FILA))
-  		FILA->prox=nova;
+ 	if(vazia(FILA)){
+ 		FILA->prox=nova;
+//  		printf("********* Inseriu na fila vazia *********\n");
+	}
  	else{
-  		linha *tmp = FILA->prox;
+// 		printf("Fila nï¿½o estava vazia\n");
+  		noLinha *tmp = FILA->prox;
 
   		while(tmp->prox != NULL)
    		tmp = tmp->prox;
 
   		tmp->prox = nova;
+  		printf("LINHA: %s", FILA->linha);
  	}
  	tam++;
+ 	printf("\n--- tamanho: %d ---\n", tam);
+ 	exibe(FILA);
 }
 
-linha *retira(linha *FILA)
+void exibe(noLinha *FILA){
+ 	if(vazia(FILA)){
+	  	printf("Fila vazia!\n\n");
+	  	return ;
+ 	}
+
+	noLinha *tmp;
+	tmp = FILA->prox;
+	printf("\n************* Fila *************\n");
+	while( tmp != NULL){
+  		printf("%s\n", tmp->linha);
+  		tmp = tmp->prox;
+ 	}
+//	printf("\n        ");
+//	int count;
+//	for(count=0 ; count < tam ; count++)
+//		printf("  ^  ");
+//	printf("\nOrdem:");
+//	for(count=0 ; count < tam ; count++)
+//  		printf("%5d", count+1);
+
+ printf("\n\n");
+}
+
+noLinha *retira(noLinha *FILA)
 {
 	if(FILA->prox == NULL){
 	  	printf("Fila ja esta vazia\n");
 	  	return NULL;
 	}
 	else{
-	  	linha *tmp = FILA->prox;
+	  	noLinha *tmp = FILA->prox;
 	  	FILA->prox = tmp->prox;
 	  	tam--;
 	  	return tmp;
  	}
 }
 
-void libera(linha *FILA){
+void libera(noLinha *FILA){
  	if(!vazia(FILA)){
-  		linha *proxLinha,
+  		noLinha *proxLinha,
      	*atual;
 
   		atual = FILA->prox;
@@ -85,7 +116,7 @@ void libera(linha *FILA){
 
 int tiraCaracteresEspeciais(char *token){
 	int i=0;
-	printf("p: %s\n", token);
+//	printf("p: %s\n", token);
 //	for(i=0;i<strlen(token);i++){
 //		printf("T[%d] = %c", i, token[i]);
 //	}
@@ -97,6 +128,8 @@ int lerLinha(char *linha, int l, char *palavra){
 	int i=0;
 	printf("frase[%d]: %s", l, linha);
 	
+//	insere(linha);
+	
 	/* get the first token */
    	token = strtok(linha, espaco);
    	palavrasSeparadas[i] = tolower(strdup(token));
@@ -106,7 +139,7 @@ int lerLinha(char *linha, int l, char *palavra){
    	while(token!=NULL){
 //      	printf(" %s\n", token);
     	palavrasSeparadas[i] = tolower(token);
-      	tiraCaracteresEspeciais(&token);
+//      	tiraCaracteresEspeciais(&token);
       	token = strtok(NULL, espaco);
    		i++;
    	}
@@ -119,7 +152,7 @@ int lerLinha(char *linha, int l, char *palavra){
 }
 
 int main(){
-	linha *FILA = (linha *) malloc(sizeof(linha));
+	noLinha *FILA = (noLinha *) malloc(sizeof(noLinha));
 	
 	if(!FILA){
   		printf("Sem memoria disponivel!\n");
@@ -137,19 +170,22 @@ int main(){
 	scanf("%s", &palavra);
 //	palavra = tolower(palavra);
 	
-	arquivo = fopen("arquivo.txt", "r");
+	arquivo = fopen("teste123.txt", "r");
 	
 	if(arquivo == NULL){
-		perror("Não foi possível abrir o arquivo");
+		perror("Nao foi possivel abrir o arquivo\n");
 		exit(1);
 	}
 	
 	char linha[1000];
 	while(fgets(linha, sizeof(linha), arquivo)){
-//		printf("linha: %s\n", linha);
-		l++;
-		lerLinha(&linha, l, &palavra);
+		printf("linha: %s\n", linha);
+//		l++;
+		FILA->linha = linha;
+		insere(FILA);
+//		
+//		lerLinha(&linha, l, &palavra);
 	}
-	
+	free(FILA);
 	return 0;
 }
