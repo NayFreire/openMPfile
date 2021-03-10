@@ -110,7 +110,7 @@ void buscaPalavra(char linha[1000], char palavraBuscada){
     while(token != NULL) {
 //        strcpy(palavrasSeparadas[qtd], tolower(token));
         printf("\n\t%s --- %s\n", tolower(token), palavra);
-        if(strcmp(tolower(token), tolower(palavra))==0){
+        if(strncmp(tolower(token), tolower(palavra),strlen(palavra))==0){
         	printf("\t\t ACHOU\n\n");
         	qtdVezes++;
 		}
@@ -168,7 +168,7 @@ int main(){
 			scanf("%s", &palavra);
 			//	palavra = tolower(palavra);
 		
-			arquivo = fopen("teste123.txt", "r");
+			arquivo = fopen("doomed.txt", "r");
 			
 			if(arquivo == NULL){
 				perror("Nao foi possivel abrir o arquivo\n");
@@ -189,6 +189,8 @@ int main(){
 			//	free(FILA);
 			printf("\n\t\tImprimindo as linhas na fila\n");
 			imprimeFila(f1);
+			desenfileirar(f1);
+			desenfileirar(f1);
 			desenfileirar(f1);
 			imprimeFila(f1);
 			
