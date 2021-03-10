@@ -111,6 +111,8 @@ int lerLinha(char *linha, int l, char *palavra){
 }
 
 int main(){
+	int numThreads = 1;
+	
 	FILA *f1 = (FILA*) malloc(sizeof(FILA));
 	
 	if(f1==NULL){
@@ -118,36 +120,39 @@ int main(){
 		exit(-1);
 	}
 	else{
-		inicializaFila(f1);	
+		#pragma parallel omp num_threads(numThreads)
+		{
+			inicializaFila(f1);	
 		
-		FILE *arquivo;
-		char palavra[20];
-		int l=0;
-	
-		printf("Digite a palavra a ser encontrada: ");
-		scanf("%s", &palavra);
-		//	palavra = tolower(palavra);
-	
-		arquivo = fopen("teste123.txt", "r");
+			FILE *arquivo;
+			char palavra[20];
+			int l=0;
 		
-		if(arquivo == NULL){
-			perror("Nao foi possivel abrir o arquivo\n");
-			exit(1);
+			printf("Digite a palavra a ser encontrada: ");
+			scanf("%s", &palavra);
+			//	palavra = tolower(palavra);
+		
+			arquivo = fopen("teste123.txt", "r");
+			
+			if(arquivo == NULL){
+				perror("Nao foi possivel abrir o arquivo\n");
+				exit(1);
+			}
+			
+			char linha[1000];
+			while(fgets(linha, sizeof(linha), arquivo)){
+				printf("linha: %s\n", linha);
+			//	l++; 
+	//			FILA->linha = linha;
+	//			insere(FILA);
+				enfileira(&linha, f1);
+			//	libera(FILA);
+			//	lerLinha(&linha, l, &palavra);
+			}
+			//	free(FILA);
+			printf("\n\t\tImprimindo as linhas na fila\n");
+			imprimeFila(f1);
 		}
-		
-		char linha[1000];
-		while(fgets(linha, sizeof(linha), arquivo)){
-			printf("linha: %s\n", linha);
-		//	l++; 
-//			FILA->linha = linha;
-//			insere(FILA);
-			enfileira(&linha, f1);
-		//	libera(FILA);
-		//	lerLinha(&linha, l, &palavra);
-		}
-		//	free(FILA);
-		printf("\n\t\tImprimindo as linhas na fila\n");
-		imprimeFila(f1);
 
 	}	
 	
