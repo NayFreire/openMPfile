@@ -3,7 +3,7 @@
 #include <ctype.h>
 
 typedef struct NO{
-	char *linha;
+	char linha[1000];
 	struct NO *prox;
 }NO;
 
@@ -17,7 +17,7 @@ void inicializaFila(FILA *f){
 	f->fim = NULL;
 }
 
-void enfileira(char *linha, FILA *f){
+void enfileira(char linha[1000], FILA *f){
 	NO *ptr = (NO*) malloc(sizeof(NO)); //Aloca o novo nó da fila
 	printf("\tlinha: %s", linha);
 	if(ptr == NULL){
@@ -26,7 +26,7 @@ void enfileira(char *linha, FILA *f){
 	}
 	else{ //SEMPRE QUE UM NÓ É ALOCADO, INICIALIZA-SE O DADO E SEU PONTEIRO PRÓXIMO APONTA PARA NULL
 //		printf("\n\t alocacao check\n");
-		ptr->linha = linha;
+		strcpy(ptr->linha, linha);
 //		printf("\taaLinha: %s\n", ptr->linha);
 		ptr->prox = NULL;
 		
@@ -46,24 +46,23 @@ void enfileira(char *linha, FILA *f){
 	}
 }
 
-int desenfileirar(FILA *f){
+void desenfileirar(FILA *f){
 	NO *ptr = f->ini;
 	printf("\taaLinha des: %s\n", ptr->linha);
-	char linha;
+	char linha[1000];
 	if(ptr!=NULL){
 		f->ini = ptr->prox; //ATUALIZA O VALOR DO INÍCIO DA FILA COM O PRÓXIMO NÓ
 		ptr->prox = NULL; //DESCONECTANDO O NÓ DA FILA
-		linha = ptr->linha; //FAZENDO UM BACKUP COM O DADO DO NÓ EXCLUÍDO
+		strcpy(linha, ptr->linha); //FAZENDO UM BACKUP COM O DADO DO NÓ EXCLUÍDO
 		free(ptr);
 		
 		if(f->ini == NULL){ //CASO O INÍCIO DA FILA APONTE PRA NULL, SIGNIFICA QUE NÃO HÁ MAIS NÓS PARA DESENFILEIRAR
 			f->fim = NULL; //ENTÃO O FIM DA FILA TAMBÉM DEVE APONTAR PARA NULL
-		}	
-		return linha;	
+		}		
 	}
 	else{
 		printf("\nFila vazia");
-		return 0;
+//		return 0;
 	}
 }
 
@@ -123,9 +122,9 @@ int main(){
 		exit(-1);
 	}
 	else{
+		inicializaFila(f1);	
 		#pragma omp parallel num_threads(numThreads)
 		{
-			inicializaFila(f1);	
 		
 			FILE *arquivo;
 			char palavra[20];
@@ -143,6 +142,7 @@ int main(){
 			}
 			
 			char linha[1000];
+			
 			while(fgets(linha, sizeof(linha), arquivo)){
 				printf("linha: %s\n", linha);
 			//	l++; 
@@ -155,8 +155,8 @@ int main(){
 			//	free(FILA);
 			printf("\n\t\tImprimindo as linhas na fila\n");
 			imprimeFila(f1);
-			printf("Desenfileirado: %s", desenfileirar(f1));
-			imprimeFila(f1);
+//			printf("Desenfileirado: %s", desenfileirar(f1));
+//			imprimeFila(f1);
 		}
 
 	}	
