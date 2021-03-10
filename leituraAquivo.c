@@ -3,7 +3,7 @@
 #include <ctype.h>
 
 typedef struct NO{
-	char linha;
+	char *linha;
 	struct NO *prox;
 }NO;
 
@@ -25,18 +25,18 @@ void enfileira(char *linha, FILA *f){
 		return;
 	}
 	else{ //SEMPRE QUE UM NÓ É ALOCADO, INICIALIZA-SE O DADO E SEU PONTEIRO PRÓXIMO APONTA PARA NULL
-		printf("\n\t alocacao check\n");
+//		printf("\n\t alocacao check\n");
 		ptr->linha = linha;
-		printf("\tLinha: %s\n", ptr->linha);
+//		printf("\taaLinha: %s\n", ptr->linha);
 		ptr->prox = NULL;
 		
 		if(f->ini == NULL){ //CASO SEJA O PRIMEIRO NÓ DA FILA, O PONTEIRO INÍCIO DA FILA TEM QUE APONTAR PARA ESSE NÓ
 			f->ini = ptr;
-			printf("\n\t enfileirando o primeiro no \n");
+			printf("\n\t *******enfileirando o primeiro no******* \n");
 		}
 		else{//CASO NÃO SEJA O PRIMEIRO NÓ A SER INSERIDO NA FILA, O PRÓXIMO DO ÚLTIMO NÓ INSERIDO VAI SER APONTADO PARA PTR
 			f->fim->prox = ptr;
-			printf("\n\t proximo no a ser enfileirado\n");
+			printf("\n\t *******proximo no a ser enfileirado*******\n");
 		}
 		
 		f->fim = ptr;
@@ -66,11 +66,13 @@ int desenfileirar(FILA *f){
 
 void imprimeFila(FILA *f){
 	NO *ptr = f->ini;
+	int i=0;
 	
 	if(ptr!=NULL){
 		while(ptr!=NULL){ //ENQUANTO HÁ NÓS NA FILA
-			printf("%s\n", ptr->linha); //O DADO DO NÓ SERÁ MOSTRADO
+			printf("L[%d]%s\n", i, ptr->linha); //O DADO DO NÓ SERÁ MOSTRADO
 			ptr = ptr->prox; //E O PONTEIRO INÍCIO DA FILA SERÁ APONTADO PARA O PRÓXIMO NÓ, PARA QUE A FILA CONTINUE SENDO MOSTRADA
+			i++;
 		}
 	}
 	else{
@@ -144,6 +146,7 @@ int main(){
 		//	lerLinha(&linha, l, &palavra);
 		}
 		//	free(FILA);
+		printf("\n\t\tImprimindo as linhas na fila\n");
 		imprimeFila(f1);
 
 	}	
