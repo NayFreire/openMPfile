@@ -17,8 +17,9 @@ void inicializaFila(FILA *f){
 	f->fim = NULL;
 }
 
-void enfileira(char linha, FILA *f){
+void enfileira(char *linha, FILA *f){
 	NO *ptr = (NO*) malloc(sizeof(NO)); //Aloca o novo nó da fila
+	printf("\tlinha: %s", linha);
 	if(ptr == NULL){
 		printf("Erro de alocacao\n");
 		return;
@@ -26,6 +27,7 @@ void enfileira(char linha, FILA *f){
 	else{ //SEMPRE QUE UM NÓ É ALOCADO, INICIALIZA-SE O DADO E SEU PONTEIRO PRÓXIMO APONTA PARA NULL
 		printf("\n\t alocacao check\n");
 		ptr->linha = linha;
+		printf("\tLinha: %s\n", ptr->linha);
 		ptr->prox = NULL;
 		
 		if(f->ini == NULL){ //CASO SEJA O PRIMEIRO NÓ DA FILA, O PONTEIRO INÍCIO DA FILA TEM QUE APONTAR PARA ESSE NÓ
@@ -124,7 +126,7 @@ int main(){
 		scanf("%s", &palavra);
 		//	palavra = tolower(palavra);
 	
-		arquivo = fopen("arquivo.txt", "r");
+		arquivo = fopen("teste123.txt", "r");
 		
 		if(arquivo == NULL){
 			perror("Nao foi possivel abrir o arquivo\n");
@@ -134,10 +136,10 @@ int main(){
 		char linha[1000];
 		while(fgets(linha, sizeof(linha), arquivo)){
 			printf("linha: %s\n", linha);
-		//	l++;
+		//	l++; 
 //			FILA->linha = linha;
 //			insere(FILA);
-			enfileira(linha, f1);
+			enfileira(&linha, f1);
 		//	libera(FILA);
 		//	lerLinha(&linha, l, &palavra);
 		}
