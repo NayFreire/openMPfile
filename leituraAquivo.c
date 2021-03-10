@@ -32,6 +32,7 @@ void enfileira(char *linha, FILA *f){
 		
 		if(f->ini == NULL){ //CASO SEJA O PRIMEIRO NÓ DA FILA, O PONTEIRO INÍCIO DA FILA TEM QUE APONTAR PARA ESSE NÓ
 			f->ini = ptr;
+			printf("\t\tprimeiro a ser enfileirado: %s\n", ptr->linha);
 			printf("\n\t *******enfileirando o primeiro no******* \n");
 		}
 		else{//CASO NÃO SEJA O PRIMEIRO NÓ A SER INSERIDO NA FILA, O PRÓXIMO DO ÚLTIMO NÓ INSERIDO VAI SER APONTADO PARA PTR
@@ -40,12 +41,14 @@ void enfileira(char *linha, FILA *f){
 		}
 		
 		f->fim = ptr;
+		printf("\n\tfim: %s\n\n", f->fim->linha);
 		return;
 	}
 }
 
 int desenfileirar(FILA *f){
 	NO *ptr = f->ini;
+	printf("\taaLinha des: %s\n", ptr->linha);
 	char linha;
 	if(ptr!=NULL){
 		f->ini = ptr->prox; //ATUALIZA O VALOR DO INÍCIO DA FILA COM O PRÓXIMO NÓ
@@ -67,7 +70,7 @@ int desenfileirar(FILA *f){
 void imprimeFila(FILA *f){
 	NO *ptr = f->ini;
 	int i=0;
-	
+	printf("\n\t\tNo inicial: %s\n", ptr->linha);
 	if(ptr!=NULL){
 		while(ptr!=NULL){ //ENQUANTO HÁ NÓS NA FILA
 			printf("L[%d]%s\n", i, ptr->linha); //O DADO DO NÓ SERÁ MOSTRADO
@@ -120,7 +123,7 @@ int main(){
 		exit(-1);
 	}
 	else{
-		#pragma parallel omp num_threads(numThreads)
+		#pragma omp parallel num_threads(numThreads)
 		{
 			inicializaFila(f1);	
 		
@@ -151,6 +154,8 @@ int main(){
 			}
 			//	free(FILA);
 			printf("\n\t\tImprimindo as linhas na fila\n");
+			imprimeFila(f1);
+			printf("Desenfileirado: %s", desenfileirar(f1));
 			imprimeFila(f1);
 		}
 
