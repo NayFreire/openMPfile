@@ -2,6 +2,9 @@
 #include <string.h>
 #include <ctype.h>
 
+char palavra[20];
+int qtdVezes = 0;
+
 typedef struct NO{
 	char linha[1000];
 	struct NO *prox;
@@ -48,22 +51,25 @@ void enfileira(char linha[1000], FILA *f){
 
 char desenfileirar(FILA *f){
 	NO *ptr = f->ini;
-	printf("\taaLinha des: %s\n", ptr->linha);
+//	printf("\taaLinha des: %s\n", ptr->linha);
 	char linhaDes[1000];
 	
 	if(ptr!=NULL){
-		printf("\tEntrou no if do desenfileira\n");
+//		printf("\tEntrou no if do desenfileira\n");
 		f->ini = ptr->prox; //ATUALIZA O VALOR DO INÍCIO DA FILA COM O PRÓXIMO NÓ
 		ptr->prox = NULL; //DESCONECTANDO O NÓ DA FILA
 		strcpy(linhaDes, ptr->linha); //FAZENDO UM BACKUP COM O DADO DO NÓ EXCLUÍDO
 		free(ptr);
 		
-		printf("backup: %s\n\n", linhaDes);
+//		printf("backup: %s\n\n", linhaDes);
 		
 		if(f->ini == NULL){ //CASO O INÍCIO DA FILA APONTE PRA NULL, SIGNIFICA QUE NÃO HÁ MAIS NÓS PARA DESENFILEIRAR
 			f->fim = NULL; //ENTÃO O FIM DA FILA TAMBÉM DEVE APONTAR PARA NULL
-			printf("if f->ini == null");
+//			printf("if f->ini == null");
 		}	
+
+		buscaPalavra(linhaDes, palavra);
+		
 		return linhaDes;	
 	}
 	else{
@@ -75,10 +81,10 @@ char desenfileirar(FILA *f){
 void imprimeFila(FILA *f){
 	NO *ptr = f->ini;
 	int i=0;
-	printf("\n\t\tNo inicial: %s\n", ptr->linha);
+//	printf("\n\t\tNo inicial: %s\n", ptr->linha);
 	if(ptr!=NULL){
 		while(ptr!=NULL){ //ENQUANTO HÁ NÓS NA FILA
-			printf("L[%d]%s\n", i, ptr->linha); //O DADO DO NÓ SERÁ MOSTRADO
+			printf("%s\n", ptr->linha); //O DADO DO NÓ SERÁ MOSTRADO
 			ptr = ptr->prox; //E O PONTEIRO INÍCIO DA FILA SERÁ APONTADO PARA O PRÓXIMO NÓ, PARA QUE A FILA CONTINUE SENDO MOSTRADA
 			i++;
 		}
@@ -89,11 +95,42 @@ void imprimeFila(FILA *f){
 	}
 }
 
-int lerLinha(char *linha, int l, char *palavra){
-	char *token, *palavrasSeparadas[1000] = {};
+void buscaPalavra(char linha[1000], char palavraBuscada){
+//	char *token;
+	char palavrasSeparadas[1000];
+//	const char espaco[2] = " ";
+	int qtd, i;
+	int tamLinha=strlen(linha);
+	int j,Npalavras,k;
+	
+	char *token = strtok(linha, " ");
+	qtd=0;
+//	for(i = 0; i < tamLinha; i++) 
+//		printf(token[i] == 0 ? "\\0" : "%c", token[i]);
+    while(token != NULL) {
+//        strcpy(palavrasSeparadas[qtd], tolower(token));
+        printf("\n\t%s --- %s\n", tolower(token), palavra);
+        if(strcmp(tolower(token), tolower(palavra))==0){
+        	printf("\t\t ACHOU\n\n");
+        	qtdVezes++;
+		}
+        token = strtok(NULL, " ");
+        qtd++;
+//        printf("\ni: %d\n", qtd);
+    }
+    int qtdPalavras = qtd;
+//    printf("qtd: %d", qtdPalavras);
+    
+//    for(i=0;i<qtdPalavras;i++){
+//    	printf("PS[%d] = %s\n", i, palavrasSeparadas[i]);
+//	}
+}
+
+int lerLinha(char *linha, char *palavra){
+	char *token, palavrasSeparadas[1000] = {};
 	const char espaco[2] = " ";
 	int i=0;
-	printf("frase[%d]: %s", l, linha);
+//	printf("frase[%d]: %s", l, linha);
 	
 //	insere(linha);
 	
@@ -104,18 +141,10 @@ int lerLinha(char *linha, int l, char *palavra){
    
    	/* walk through other tokens */
    	while(token!=NULL){
-//      	printf(" %s\n", token);
     	palavrasSeparadas[i] = tolower(token);
-//      	tiraCaracteresEspeciais(&token);
       	token = strtok(NULL, espaco);
    		i++;
    	}
-   	
-   	int count = i;
-   	
-   	for(i=0;i<count;i++){
-   		printf("palavra[%d]: %s\n", i, palavrasSeparadas[i]);
-	}
 }
 
 int main(){
@@ -133,14 +162,13 @@ int main(){
 		{
 		
 			FILE *arquivo;
-			char palavra[20];
 			int l=0;
 		
 			printf("Digite a palavra a ser encontrada: ");
 			scanf("%s", &palavra);
 			//	palavra = tolower(palavra);
 		
-			arquivo = fopen("arquivo.txt", "r");
+			arquivo = fopen("teste123.txt", "r");
 			
 			if(arquivo == NULL){
 				perror("Nao foi possivel abrir o arquivo\n");
@@ -163,6 +191,8 @@ int main(){
 			imprimeFila(f1);
 			desenfileirar(f1);
 			imprimeFila(f1);
+			
+			printf("quantidade de vezes que %s apareceu: %d", palavra, qtdVezes);
 		}
 
 	}	
