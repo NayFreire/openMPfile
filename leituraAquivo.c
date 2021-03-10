@@ -46,19 +46,25 @@ void enfileira(char linha[1000], FILA *f){
 	}
 }
 
-void desenfileirar(FILA *f){
+char desenfileirar(FILA *f){
 	NO *ptr = f->ini;
 	printf("\taaLinha des: %s\n", ptr->linha);
-	char linha[1000];
+	char linhaDes[1000];
+	
 	if(ptr!=NULL){
+		printf("\tEntrou no if do desenfileira\n");
 		f->ini = ptr->prox; //ATUALIZA O VALOR DO INÍCIO DA FILA COM O PRÓXIMO NÓ
 		ptr->prox = NULL; //DESCONECTANDO O NÓ DA FILA
-		strcpy(linha, ptr->linha); //FAZENDO UM BACKUP COM O DADO DO NÓ EXCLUÍDO
+		strcpy(linhaDes, ptr->linha); //FAZENDO UM BACKUP COM O DADO DO NÓ EXCLUÍDO
 		free(ptr);
+		
+		printf("backup: %s\n\n", linhaDes);
 		
 		if(f->ini == NULL){ //CASO O INÍCIO DA FILA APONTE PRA NULL, SIGNIFICA QUE NÃO HÁ MAIS NÓS PARA DESENFILEIRAR
 			f->fim = NULL; //ENTÃO O FIM DA FILA TAMBÉM DEVE APONTAR PARA NULL
-		}		
+			printf("if f->ini == null");
+		}	
+		return linhaDes;	
 	}
 	else{
 		printf("\nFila vazia");
@@ -134,7 +140,7 @@ int main(){
 			scanf("%s", &palavra);
 			//	palavra = tolower(palavra);
 		
-			arquivo = fopen("teste123.txt", "r");
+			arquivo = fopen("arquivo.txt", "r");
 			
 			if(arquivo == NULL){
 				perror("Nao foi possivel abrir o arquivo\n");
@@ -155,8 +161,8 @@ int main(){
 			//	free(FILA);
 			printf("\n\t\tImprimindo as linhas na fila\n");
 			imprimeFila(f1);
-//			printf("Desenfileirado: %s", desenfileirar(f1));
-//			imprimeFila(f1);
+			desenfileirar(f1);
+			imprimeFila(f1);
 		}
 
 	}	
