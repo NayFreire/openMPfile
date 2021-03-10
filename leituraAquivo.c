@@ -13,11 +13,13 @@ typedef struct NO{
 typedef struct FILA{
 	NO *ini;
 	NO *fim;
+	int tamanho;
 }FILA;
 
 void inicializaFila(FILA *f){
 	f->ini = NULL;
 	f->fim = NULL;
+	f->tamanho = 0;
 }
 
 void enfileira(char linha[1000], FILA *f){
@@ -44,7 +46,8 @@ void enfileira(char linha[1000], FILA *f){
 		}
 		
 		f->fim = ptr;
-		printf("\n\tfim: %s\n\n", f->fim->linha);
+		f->tamanho++;
+		printf("\n\t\ttam: %d\n\n", f->tamanho);
 		return;
 	}
 }
@@ -67,6 +70,9 @@ char desenfileirar(FILA *f){
 			f->fim = NULL; //ENTÃO O FIM DA FILA TAMBÉM DEVE APONTAR PARA NULL
 //			printf("if f->ini == null");
 		}	
+		
+		f->tamanho--;
+		printf("\t\t\ttam: %d", f->tamanho);
 
 		buscaPalavra(linhaDes, palavra);
 		
@@ -162,7 +168,7 @@ int main(){
 		{
 		
 			FILE *arquivo;
-			int l=0;
+			int l=0, i;
 		
 			printf("Digite a palavra a ser encontrada: ");
 			scanf("%s", &palavra);
@@ -189,9 +195,13 @@ int main(){
 			//	free(FILA);
 			printf("\n\t\tImprimindo as linhas na fila\n");
 			imprimeFila(f1);
-			desenfileirar(f1);
-			desenfileirar(f1);
-			desenfileirar(f1);
+			
+			int tamFila = f1->tamanho;
+			
+			for(i=0;i<tamFila;i++){
+				desenfileirar(f1);
+			}
+			
 			imprimeFila(f1);
 			
 			printf("quantidade de vezes que %s apareceu: %d", palavra, qtdVezes);
